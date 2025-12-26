@@ -1,0 +1,23 @@
+CREATE TABLE QuoteEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    content TEXT NOT NULL,
+    author TEXT NOT NULL,
+    details TEXT NOT NULL
+);
+
+getAllQuotes:
+SELECT *
+FROM QuoteEntity;
+
+getQuoteById:
+SELECT *
+FROM QuoteEntity
+WHERE id = ?;
+
+insertQuote:
+INSERT OR REPLACE INTO QuoteEntity(id, content, author, details)
+VALUES (?, ?, ?, ?);
+
+deleteAllQuotes:
+DELETE FROM QuoteEntity;
+

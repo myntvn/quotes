@@ -12,16 +12,14 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
-fun App() {
+fun App(repository: QuoteRepository) {
     MaterialTheme {
         var currentScreen by remember { mutableStateOf<Screen>(Screen.List) }
-        val api = remember { QuoteApi() }
 
         when (val screen = currentScreen) {
             is Screen.List -> {
                 QuoteListScreen(
-                    api = api,
+                    repository = repository,
                     onQuoteClick = { quote ->
                         currentScreen = Screen.Details(quote)
                     }
@@ -47,22 +45,10 @@ sealed class Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuoteListScreen(
-    api: QuoteApi,
+    repository: QuoteRepository,
     onQuoteClick: (Quote) -> Unit
 ) {
-    var quotes by remember { mutableStateOf<List<Quote>>(emptyList()) }
-    var loading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        try {
-            quotes = api.getAllQuotes()
-            loading = false
-        } catch (e: Exception) {
-            error = e.message
-            loading = false
-        }
-    }
+    val quotes by repository.getQuotes().collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
@@ -70,15 +56,9 @@ fun QuoteListScreen(
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            if (loading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else if (error != null) {
-                Text("Error: $error", modifier = Modifier.align(Alignment.Center))
-            } else {
-                LazyColumn {
-                    items(quotes) { quote ->
-                        QuoteItem(quote, onClick = { onQuoteClick(quote) })
-                    }
+            LazyColumn {
+                items(quotes) { quote ->
+                    QuoteItem(quote, onClick = { onQuoteClick(quote) })
                 }
             }
         }

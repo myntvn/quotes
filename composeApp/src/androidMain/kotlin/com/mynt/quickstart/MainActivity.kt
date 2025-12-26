@@ -7,19 +7,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
+import com.mynt.quickstart.db.AppDatabase
+import com.mynt.quickstart.db.DatabaseDriverFactory
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        val api = QuoteApi()
+        val database = AppDatabase(DatabaseDriverFactory(this).createDriver())
+        val repository = QuoteRepository(database, api)
+
         setContent {
-            App()
+            App(repository)
         }
     }
 }
 
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
-}
