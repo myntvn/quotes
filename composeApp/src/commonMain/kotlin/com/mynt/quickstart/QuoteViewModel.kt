@@ -2,12 +2,13 @@ package com.mynt.quickstart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mynt.quickstart.data.quote.QuoteRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 class QuoteViewModel(
-    private val repository: QuoteRepository
+    repository: QuoteRepository
 ) : ViewModel() {
     val quotes: StateFlow<List<Quote>> = repository.getQuotes()
         .stateIn(

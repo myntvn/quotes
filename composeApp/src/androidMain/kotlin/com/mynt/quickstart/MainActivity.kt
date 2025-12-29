@@ -15,12 +15,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        val api = QuoteApi()
-        val database = AppDatabase(DatabaseDriverFactory(this).createDriver())
-        val repository = QuoteRepository(database, api)
-
         setContent {
-            App(repository)
+            App()
         }
     }
 }

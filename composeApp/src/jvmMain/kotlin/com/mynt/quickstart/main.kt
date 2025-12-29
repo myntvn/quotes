@@ -1,19 +1,21 @@
 package com.mynt.quickstart
 
-import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.mynt.quickstart.db.AppDatabase
-import com.mynt.quickstart.db.DatabaseDriverFactory
+import com.mynt.quickstart.di.appModule
+import com.mynt.quickstart.di.platformModule
+import org.koin.core.context.startKoin
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "QuickStart",
-    ) {
-        val api = remember { QuoteApi() }
-        val database = remember { AppDatabase(DatabaseDriverFactory().createDriver()) }
-        val repository = remember { QuoteRepository(database, api) }
-        App(repository)
+fun main() {
+    startKoin {
+        modules(appModule, platformModule)
+    }
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "QuickStart",
+        ) {
+            App()
+        }
     }
 }
