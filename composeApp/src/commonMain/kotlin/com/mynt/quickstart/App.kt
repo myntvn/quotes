@@ -9,17 +9,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun App(repository: QuoteRepository) {
     MaterialTheme {
         var currentScreen by remember { mutableStateOf<Screen>(Screen.List) }
+        val viewModel = viewModel { QuoteViewModel(repository) }
 
         when (val screen = currentScreen) {
             is Screen.List -> {
                 QuoteListScreen(
-                    repository = repository,
+                    viewModel = viewModel,
                     onQuoteClick = { quote ->
                         currentScreen = Screen.Details(quote)
                     }
@@ -45,10 +48,10 @@ sealed class Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuoteListScreen(
-    repository: QuoteRepository,
+    viewModel: QuoteViewModel,
     onQuoteClick: (Quote) -> Unit
 ) {
-    val quotes by repository.getQuotes().collectAsState(initial = emptyList())
+    val quotes by viewModel.quotes.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
